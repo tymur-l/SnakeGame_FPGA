@@ -1,0 +1,8 @@
+# ignore compiled & simulation files
+/output_files/
+/simulation/
+/incremental_db/
+/db/
+
+# ignore temp files
+**/*.bak
