@@ -5,6 +5,7 @@ module SnakeGame (
 	// input from joystick
 	// output to VGA
 );
+	wire gl_clk;
 	wire [1:0] dir;
 	wire [`WORD_MSB:0]
 		snake_head,
@@ -13,10 +14,16 @@ module SnakeGame (
 	wire [`MSB_NUM_TAILS:0]
 		tails_count;
 	
+	
+	glob_clk global_clock (
+		.inclk0 (clk),
+		.c0 (gl_clk)
+	);
+	
 	game_logic game_proc (
 		.direction (dir),
 		
-		.clk (clk),
+		.clk (gl_clk),
 		
 		//.tail_value (),
 		
@@ -45,9 +52,6 @@ module SnakeGame (
 		
 		//.value ()
 	);
-	// TODO: instantiate global clock
-	// TODO: instantiate game_logic module
-	// TODO: instantiate game memory module
 
 	// process input from joystick
 	// send processed input from joystick to game logic module
