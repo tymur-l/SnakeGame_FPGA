@@ -1,13 +1,13 @@
 // Module used to generate pseudo random numbers
 
 module rand_generator #(
-	parameter msb_res = 7,
+	parameter last_bit_addr = 7,
 	max_num = 255,
 	seed = 391
 )
 (
 	input wire clk,
-	output reg [msb_res:0] rnd_num
+	output reg [0:last_bit_addr] rnd_num
 );
 
 	initial
