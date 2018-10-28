@@ -23,7 +23,8 @@ module game_logic (
 		value_addr,
 		
 	output reg
-		read_write_mem // 1 - read, 0 - write
+		read_write_mem, // 1 - read, 0 - write
+		is_calc_finished
 );
 	wire [`WORD_MSB:0] rn_num;
 	reg [`WORD_MSB:0] prev_snake_head_pos;
@@ -44,12 +45,15 @@ module game_logic (
 		value_addr = 7'd0;
 		new_tail_value = 12'd0;
 		read_write_mem = 1'b1;
+		is_calc_finished = 1'b0;
 	end
 
 	// change game state depending on input
 	// at posedge of each clock cycle
 	always @(posedge clk)
 	begin
+		is_calc_finished = 1'b0;
+		
 		case (direction)
 			`LEFT_DIR: move_left;
 			`TOP_DIR: move_top;
@@ -170,6 +174,8 @@ module game_logic (
 			
 			prev_snake_head_pos = snake_head_pos;
 		end
+		
+		is_calc_finished = 1'b1;
 	end
 	endtask
 	

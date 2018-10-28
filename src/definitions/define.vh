@@ -34,5 +34,7 @@
 `define LAST_VER_CELL_ADDR (`GRID_HEIGHT  - 1)
 `define LAST_ROW_FIRST_CELL_ADDRESS ((`GRID_WIDTH * `LAST_VER_CELL_ADDR) + 1)
 
+`define COORD_VGA_MSB_X 9
+`define COORD_VGA_MSB_Y 9
 
 `endif // define_vh
