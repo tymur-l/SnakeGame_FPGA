@@ -9,7 +9,7 @@ out = 2'b01;
 end
 always@(*)
 begin
-if(left +right + up + down == 1) begin
+	if(left +right + up + down == 3'b001) begin
 	if(left && out != 2'b10)begin
 		out = 2'b00;
 	end
