@@ -2,35 +2,49 @@
 `include "../definitions/define.vh"
 
 module SnakeGame (
-	// input from joystick
+	input wire
+		left_pin,
+		right_pin,
+		top_pin,
+		down_pin,
+	
 	input wire clk, // 50MHz
 	
 	//////////////////// VGA ////////////////////////////
-	input reset,
-	input color, // swap between 2 outputs
+	input wire
+		reset,
+		color, // swap between 2 outputs
 	
-	output	VGA_HS, // VGA H_SYNC
-	output	VGA_VS, // VGA V_SYNC
-	output	VGA_R,  // VGA Red
-	output	VGA_G,  // VGA Green
-	output	VGA_B   // VGA Blue
+	output wire
+		VGA_HS, // VGA H_SYNC
+		VGA_VS, // VGA V_SYNC
+		VGA_R,  // VGA Red
+		VGA_G,  // VGA Green
+		VGA_B   // VGA Blue
+	
+	, output wire [0:1] dir_out // TODO: for debug
 );
 	wire vga_clk;
-	//wire gm_clk;
 	
 	VGA_clk vga_clk_gen (
 		clk,
 		vga_clk
 	);
-//	
-//	game_clk gm_clk_gen (
-//		clk,
-//		gm_clk
-//	);
 	
-	wire [0:1] dir = `TOP_DIR;
+	wire [0:1] dir;
+	
+	buttons buttons_input (
+		//.clk(vga_clk),
+		.left(left_pin),
+		.right(right_pin),
+		.up(top_pin),
+		.down(down_pin),
+		.out(dir)
+	);
+	
+	assign dir_out = dir; // TODO: for debug
+	
 	wire [0:1] cur_ent_code;
-	//assign cur_ent_code = 0;
 	
 	game_logic game_logic_module (
 		.clk (vga_clk),
@@ -39,11 +53,6 @@ module SnakeGame (
 		.y (mVGA_Y),
 		.entity (cur_ent_code)
 	);
-	
-	// process input from joystick
-	// send processed input from joystick to game logic module
-		// save game state to shared memory
-	// let VGA controller take the data from memory and produce output
 
 	//////////////////////// VGA ////////////////////
 	wire	[9:0]	mVGA_X;
@@ -93,10 +102,8 @@ module SnakeGame (
 		);
 	
 	
-	assign	VGA_R	=	sVGA_R;
-	assign	VGA_G	=	sVGA_G;
-	assign	VGA_B	=	sVGA_B;
-	
-
+	assign VGA_R = sVGA_R;
+	assign VGA_G = sVGA_G;
+	assign VGA_B = sVGA_B;
 	
 endmodule
