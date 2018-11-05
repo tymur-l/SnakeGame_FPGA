@@ -34,10 +34,10 @@ module SnakeGame (
 		clk,
 		vga_clk
 	);
-	
+
 	// Game input
 	wire [0:1] dir;
-	
+
 	joystick_input ji (
 		.one_resistor_x(res_x_one),
 		.two_resistors_x(res_x_two),
@@ -46,12 +46,12 @@ module SnakeGame (
 		.clk(vga_clk),
 		.direction(dir)
 	);
-	
+
 	assign dir_out = dir; // for debug
-	
+
 	// Game logic
 	wire [0:1] cur_ent_code;
-	
+
 	game_logic game_logic_module (
 		.clk(vga_clk),
 		.reset(0),
@@ -72,7 +72,7 @@ module SnakeGame (
 	wire	sVGA_R;
 	wire	sVGA_G;
 	wire	sVGA_B;
-	
+
 	VGA_Pattern	u3 // Drawing
 		(	//	Read Out Side
 			.oRed(mVGA_R),
@@ -107,8 +107,7 @@ module SnakeGame (
 			.iCLK(vga_clk),
 			.reset(reset)
 		);
-	
-	
+
 	assign VGA_R = sVGA_R;
 	assign VGA_G = sVGA_G;
 	assign VGA_B = sVGA_B;

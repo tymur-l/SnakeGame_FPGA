@@ -13,6 +13,7 @@ module game_logic (
 	reg `Y_SIZE snake_head_y, apple_y;
 	reg [2:0] drawing_cycles_passed;
 	reg can_update;
+	reg was_updated;
 
 	task init ();
 	begin
@@ -26,8 +27,8 @@ module game_logic (
 	begin
 		init ();
 		drawing_cycles_passed <= 0;
-		snake_head_x <= 23;
-		snake_head_y <= 14;
+		snake_head_x <= `GRID_MID_WIDTH;
+		snake_head_y <= `GRID_MID_HEIGHT;
 	end
 
 	assign cur_x = (x_in / `H_SQUARE);
@@ -38,7 +39,7 @@ module game_logic (
 		if (reset)
 			init();
 		else
-		begin			
+		begin
 			if (
 				cur_x == snake_head_x &&
 				cur_y == snake_head_y
@@ -60,9 +61,14 @@ module game_logic (
 		end
 	end
 
-	always @(posedge clk) // TODO: or reset
+	always @(posedge can_update or posedge reset)
 	begin
-		if (can_update)
+		if (reset)
+		begin
+			snake_head_x <= `GRID_MID_WIDTH;
+			snake_head_y <= `GRID_MID_HEIGHT;
+		end
+		else
 		begin
 			case (direction)
 				`LEFT_DIR:
@@ -99,13 +105,25 @@ module game_logic (
 
 	always @(posedge clk)
 	begin
+		if (can_update)
+		begin
+			was_updated <= 1;
+		end
+		else
+		begin
+			was_updated <=
+				(drawing_cycles_passed == `DRAWING_CYCLES_TO_WAIT) ?
+				1:
+				0;
+		end
+	end
+
+	always @(posedge clk)
+	begin
 		can_update <=
 			(
-				(~is_game_finished) &&
-				((x_in % `H_SQUARE_LAST_ADDR) == 0) &&
-				((y_in % `V_SQUARE_LAST_ADDR) == 0) &&
-				(cur_x == snake_head_x) &&
-				(cur_y == snake_head_y) &&
+				~is_game_finished &&
+				~was_updated &&
 				(drawing_cycles_passed == `DRAWING_CYCLES_TO_WAIT)
 			);
 	end

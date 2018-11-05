@@ -1,5 +1,5 @@
 `include "../../definitions/define.vh"
-`include "../../definitions/sprites.vh"
+`include "../../definitions/sprites_debug.vh"
 
 module	VGA_Pattern	(	//	Read Out Side
 						oRed,
@@ -27,7 +27,10 @@ input [0:1]		ent;
 // Drawing
 reg [0:`SPRITE_MSB] sp [0:2][0:`H_SQUARE_LAST_ADDR][0:`V_SQUARE_LAST_ADDR];
 
-
+initial
+begin
+	`SPRITE_INIT
+end
 
 always @(posedge iVGA_CLK or posedge reset)
 begin
@@ -39,9 +42,6 @@ begin
 	end
 	else
 	begin
-	
-	`SPRITE_INIT
-
 	if(iColor_SW == 0)
 		begin
 			// DRAW CURRENT STATE

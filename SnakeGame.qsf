@@ -82,7 +82,6 @@ set_global_assignment -name VERILOG_INCLUDE_FILE src/definitions/define.vh
 set_global_assignment -name VERILOG_FILE src/modules/SnakeGame.v
 set_global_assignment -name QIP_FILE src/modules/shared/clks/VGA_clk/VGA_clk.qip
 set_global_assignment -name VERILOG_FILE src/modules/core_logic/game_logic.v
-set_global_assignment -name QIP_FILE src/modules/shared/clks/game_clk/game_clk.qip
 set_global_assignment -name VERILOG_INCLUDE_FILE src/definitions/sprites.vh
 set_location_assignment PIN_30 -to res_x_one
 set_location_assignment PIN_52 -to res_x_two
