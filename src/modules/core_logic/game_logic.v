@@ -1,78 +1,135 @@
-`include "../../definitions/initialization.vh"
+`include "../../definitions/define.vh"
 
 module game_logic (
-	input clk,
+	input clk, reset,
 	input [0:1] direction,
-	input wire [9:0] x, y,
-	output wire [0:1] entity
+	input wire [9:0] x_in, y_in, // new values are given at each clock cycle
+	output reg [0:1] entity,
+	output reg is_game_finished
 );
-	`GRID_WORD game_grid [0:`LAST_HOR_ADDR][0:`LAST_VER_ADDR];
-	wire `X_SIZE rand_x;
-	wire `Y_SIZE rand_y;
 	wire `X_SIZE cur_x;
 	wire `Y_SIZE cur_y;
-	
-	assign cur_x = (x / `H_SQUARE);
-	assign cur_y = (y / `V_SQUARE);
+	reg `X_SIZE snake_head_x, apple_x;
+	reg `Y_SIZE snake_head_y, apple_y;
+	reg [2:0] drawing_cycles_passed;
+	reg can_update;
 
-	rand_generator #(`MEM_VERT_ADDR_MSB, `LAST_HOR_ADDR, 13)
-		rnd_gen_hor (
-			clk,
-			rand_x
-		)
-	;
-
-	rand_generator #(`MEM_HOR_ADDR_MSB, `LAST_VER_ADDR, 5)
-		rnd_gen_ver (
-			clk,
-			rand_y
-		)
-	;
-	
-	assign entity = game_grid[cur_x][cur_y][0:1];
+	task init ();
+	begin
+		apple_x <= 34;
+		apple_y <= 9;
+		is_game_finished <= 0;
+	end
+	endtask
 
 	initial
 	begin
-		`GRID_INIT
+		init ();
+		drawing_cycles_passed <= 0;
+		snake_head_x <= 23;
+		snake_head_y <= 14;
 	end
-	
-//reg [4:0] counter_y, counter_x;
-//	always @(posedge clk)
-//	begin
-//		if (counter_x == 4'd12)
-//		begin
-//			counter_x = 4'd0;
-//			
-//			if (cur_x == `LAST_HOR_ADDR)
-//			begin
-//				cur_x = 0;
-//				counter_y = counter_y + 1;
-//			end
-//			else
-//			begin
-//				cur_x = cur_x + 1;
-//			end
-//		end
-//		else
-//		begin
-//			counter_x = counter_x + 1;
-//		end
-//		
-//		if (counter_y == 4'd15)
-//		begin
-//			counter_y = 0;
-//			
-//			if (cur_y == `LAST_VER_ADDR)
-//			begin
-//				cur_y = 0;
-//			end
-//			else
-//			begin
-//				cur_y = cur_y + 1;
-//			end
-//		end
-//		
-//		//entity = game_grid[cur_x][cur_y][0:1];
-//	end
-	
+
+	assign cur_x = (x_in / `H_SQUARE);
+	assign cur_y = (y_in / `V_SQUARE);
+
+	always @(posedge clk or posedge reset)
+	begin
+		if (reset)
+			init();
+		else
+		begin			
+			if (
+				cur_x == snake_head_x &&
+				cur_y == snake_head_y
+			)
+			begin
+				entity = `ENT_SNAKE_HEAD;
+			end
+			else if (
+				cur_x == apple_x &&
+				cur_y == apple_y
+			)
+			begin
+				entity = `ENT_APPLE;
+			end
+			else
+			begin
+				entity = `ENT_NOTHING;
+			end
+		end
+	end
+
+	always @(posedge clk) // TODO: or reset
+	begin
+		if (can_update)
+		begin
+			case (direction)
+				`LEFT_DIR:
+				begin
+					snake_head_x <=
+						(snake_head_x == 0) ?
+							`LAST_HOR_ADDR:
+							(snake_head_x - 12'd1);
+				end
+				`TOP_DIR:
+				begin
+					snake_head_y <=
+						(snake_head_y == 0) ?
+							`LAST_VER_ADDR:
+							(snake_head_y - 12'd1);
+				end
+				`RIGHT_DIR:
+				begin
+					snake_head_x <=
+						(snake_head_x == `LAST_HOR_ADDR) ?
+							0:
+							(snake_head_x + 12'd1);
+				end
+				`DOWN_DIR:
+				begin
+					snake_head_y <=
+						(snake_head_y == `LAST_VER_ADDR) ?
+							0:
+							(snake_head_y + 12'd1);
+				end
+			endcase
+		end
+	end
+
+	always @(posedge clk)
+	begin
+		can_update <=
+			(
+				(~is_game_finished) &&
+				((x_in % `H_SQUARE_LAST_ADDR) == 0) &&
+				((y_in % `V_SQUARE_LAST_ADDR) == 0) &&
+				(cur_x == snake_head_x) &&
+				(cur_y == snake_head_y) &&
+				(drawing_cycles_passed == `DRAWING_CYCLES_TO_WAIT)
+			);
+	end
+
+	// calculate number of times screen was fully drawn
+	always @(posedge clk or posedge reset)
+	begin
+		if (reset)
+		begin
+			drawing_cycles_passed <= 0;
+		end
+		else
+		begin
+			if (
+				(x_in == `LAST_HOR_ADDR) &&
+				(y_in == `LAST_VER_ADDR)
+			)
+			begin
+				drawing_cycles_passed <=
+					(drawing_cycles_passed == `DRAWING_CYCLES_TO_WAIT) ?
+						0:
+						drawing_cycles_passed + 1;
+			end
+		end
+	end
+
 endmodule

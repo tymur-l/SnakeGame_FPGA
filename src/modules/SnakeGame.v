@@ -2,19 +2,21 @@
 `include "../definitions/define.vh"
 
 module SnakeGame (
+	// joystick input
 	input wire
-		left_pin,
-		right_pin,
-		top_pin,
-		down_pin,
+		res_x_one,
+		res_x_two,
+		res_y_one,
+		res_y_two,
 	
 	input wire clk, // 50MHz
 	
-	//////////////////// VGA ////////////////////////////
+	// VGA input
 	input wire
 		reset,
 		color, // swap between 2 outputs
 	
+	// VGA output
 	output wire
 		VGA_HS, // VGA H_SYNC
 		VGA_VS, // VGA V_SYNC
@@ -22,8 +24,10 @@ module SnakeGame (
 		VGA_G,  // VGA Green
 		VGA_B   // VGA Blue
 	
-	, output wire [0:1] dir_out // TODO: for debug
+	// joystick output
+	, output wire [0:1] dir_out // for debug
 );
+	// Clock
 	wire vga_clk;
 	
 	VGA_clk vga_clk_gen (
@@ -31,30 +35,34 @@ module SnakeGame (
 		vga_clk
 	);
 	
+	// Game input
 	wire [0:1] dir;
 	
-	buttons buttons_input (
-		//.clk(vga_clk),
-		.left(left_pin),
-		.right(right_pin),
-		.up(top_pin),
-		.down(down_pin),
-		.out(dir)
+	joystick_input ji (
+		.one_resistor_x(res_x_one),
+		.two_resistors_x(res_x_two),
+		.one_resistor_y(res_y_one),
+		.two_resistors_y(res_y_two),
+		.clk(vga_clk),
+		.direction(dir)
 	);
 	
-	assign dir_out = dir; // TODO: for debug
+	assign dir_out = dir; // for debug
 	
+	// Game logic
 	wire [0:1] cur_ent_code;
 	
 	game_logic game_logic_module (
-		.clk (vga_clk),
-		.direction (dir),
-		.x (mVGA_X),
-		.y (mVGA_Y),
-		.entity (cur_ent_code)
+		.clk(vga_clk),
+		.reset(0),
+		.direction(dir),
+		.x_in(mVGA_X),
+		.y_in(mVGA_Y),
+		.entity(cur_ent_code),
+		//.is_game_finished()
 	);
 
-	//////////////////////// VGA ////////////////////
+	// VGA
 	wire	[9:0]	mVGA_X;
 	wire	[9:0]	mVGA_Y;
 	wire	mVGA_R;
@@ -79,7 +87,6 @@ module SnakeGame (
 			.ent(cur_ent_code)
 		);
 
-	
 	VGA_Ctrl	u2 // Setting up VGA Signal
 		(	//	Host Side
 			.oCurrent_X(mVGA_X),

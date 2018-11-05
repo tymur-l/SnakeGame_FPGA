@@ -25,7 +25,7 @@ input				iColor_SW;
 input [0:1]		ent;
 
 // Drawing
-reg [0:`SPRITE_MSB] sp [0:2][0:`H_SQUARE_LAST_ADDR][0:`v_SQUARE_LAST_ADDR];
+reg [0:`SPRITE_MSB] sp [0:2][0:`H_SQUARE_LAST_ADDR][0:`V_SQUARE_LAST_ADDR];
 
 
 

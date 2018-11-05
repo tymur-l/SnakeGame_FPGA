@@ -21,7 +21,9 @@
 `define H_SQUARE 16
 `define V_SQUARE 16
 `define H_SQUARE_LAST_ADDR (`H_SQUARE - 1)
-`define v_SQUARE_LAST_ADDR (`V_SQUARE - 1)
+`define V_SQUARE_LAST_ADDR (`V_SQUARE - 1)
+
+`define DRAWING_CYCLES_TO_WAIT 3'd4
 
 `define SPRITE_CNT 3
 `define SPRITE_MSB `SPRITE_CNT - 1
@@ -36,12 +38,7 @@
 `define LAST_HOR_ADDR (`GRID_WIDTH  - 1)
 `define LAST_VER_ADDR (`GRID_HEIGHT  - 1)
 
-
 // memory
-`define GRID_WORD_SIZE 4
-`define LAST_GRID_WORD_BIT_ADDR (`GRID_WORD_SIZE - 1)
-`define GRID_WORD reg [0:`LAST_GRID_WORD_BIT_ADDR]
-
 `define MEM_VERT_ADDR_MSB $clog2(`GRID_WIDTH)
 `define MEM_HOR_ADDR_MSB $clog2(`GRID_HEIGHT)
 
