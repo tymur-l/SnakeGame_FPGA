@@ -54,12 +54,13 @@ module SnakeGame (
 
 	game_logic game_logic_module (
 		.clk(vga_clk),
-		.reset(0),
+		.reset(reset),
 		.direction(dir),
 		.x_in(mVGA_X),
 		.y_in(mVGA_Y),
 		.entity(cur_ent_code),
-		//.is_game_finished()
+		//.game_over(),
+		//.game_won()
 	);
 
 	// VGA
@@ -111,5 +112,5 @@ module SnakeGame (
 	assign VGA_R = sVGA_R;
 	assign VGA_G = sVGA_G;
 	assign VGA_B = sVGA_B;
-	
+
 endmodule

@@ -72,6 +72,11 @@ set_global_assignment -name FINAL_PLACEMENT_OPTIMIZATION ALWAYS
 set_global_assignment -name FITTER_AGGRESSIVE_ROUTABILITY_OPTIMIZATION ALWAYS
 set_global_assignment -name OPTIMIZATION_MODE "AGGRESSIVE AREA"
 set_global_assignment -name CYCLONEII_OPTIMIZATION_TECHNIQUE AREA
+set_location_assignment PIN_30 -to res_x_one
+set_location_assignment PIN_52 -to res_x_two
+set_location_assignment PIN_39 -to res_y_one
+set_location_assignment PIN_44 -to res_y_two
+set_global_assignment -name VERILOG_FILE src/modules/util/random/LFSR/LFSR.v
 set_global_assignment -name VERILOG_FILE src/modules/input/joystick_input.v
 set_global_assignment -name VERILOG_FILE src/modules/input/buttons.v
 set_global_assignment -name VERILOG_INCLUDE_FILE src/definitions/initialization.vh
@@ -83,8 +88,4 @@ set_global_assignment -name VERILOG_FILE src/modules/SnakeGame.v
 set_global_assignment -name QIP_FILE src/modules/shared/clks/VGA_clk/VGA_clk.qip
 set_global_assignment -name VERILOG_FILE src/modules/core_logic/game_logic.v
 set_global_assignment -name VERILOG_INCLUDE_FILE src/definitions/sprites.vh
-set_location_assignment PIN_30 -to res_x_one
-set_location_assignment PIN_52 -to res_x_two
-set_location_assignment PIN_39 -to res_y_one
-set_location_assignment PIN_44 -to res_y_two
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

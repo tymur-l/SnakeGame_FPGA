@@ -23,7 +23,7 @@
 `define H_SQUARE_LAST_ADDR (`H_SQUARE - 1)
 `define V_SQUARE_LAST_ADDR (`V_SQUARE - 1)
 
-`define DRAWING_CYCLES_TO_WAIT 3'd4
+`define DRAWING_CYCLES_TO_WAIT 3'd5
 
 `define SPRITE_CNT 3
 `define SPRITE_MSB `SPRITE_CNT - 1
@@ -36,7 +36,7 @@
 //`define MID_ADDR ((`GRID_MID_WIDTH - 1) * (`GRID_MID_HEIGHT - 1));
 
 `define LAST_HOR_ADDR (`GRID_WIDTH  - 1)
-`define LAST_VER_ADDR (`GRID_HEIGHT  - 1)
+`define LAST_VER_ADDR (`GRID_HEIGHT - 1)
 
 // memory
 `define MEM_VERT_ADDR_MSB $clog2(`GRID_WIDTH)
@@ -44,5 +44,11 @@
 
 `define X_SIZE [`MEM_VERT_ADDR_MSB:0]
 `define Y_SIZE [`MEM_HOR_ADDR_MSB:0]
+`define COORD_SIZE [`MEM_VERT_ADDR_MSB + `MEM_HOR_ADDR_MSB:0]
+
+`define MAX_TAILS 128
+`define LAST_TAIL_ADDR (`MAX_TAILS - 1)
+`define TAIL_COUNT_MSB $clog2(`MAX_TAILS)
+`define TAIL_SIZE [`TAIL_COUNT_MSB:0]
 
 `endif // define_vh
