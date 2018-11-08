@@ -110,14 +110,17 @@ module game_logic (
 
 			for (i = 0; i < `MAX_TAILS; i = i + 1)
 			begin
-				if (tails[i] == {cur_x, cur_y} && i < tail_count)
+				if (i < tail_count)
 				begin
-					is_cur_coord_tail = 1'b1;
-				end
+					if (tails[i] == {cur_x, cur_y})
+					begin
+						is_cur_coord_tail = 1'b1;
+					end
 
-				if (tails[i] == {snake_head_x, snake_head_y})
-				begin
-					game_over = 1'b1;
+					if (tails[i] == {snake_head_x, snake_head_y})
+					begin
+						game_over = 1'b1;
+					end
 				end
 			end
 		end
