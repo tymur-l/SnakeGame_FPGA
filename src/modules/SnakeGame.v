@@ -25,7 +25,7 @@ module SnakeGame (
 		VGA_B   // VGA Blue
 	
 	// joystick output
-	, output wire [0:1] dir_out // for debug
+	//, output wire [0:1] dir_out // for debug
 );
 	// Clock
 	wire vga_clk;
