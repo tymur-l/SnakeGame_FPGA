@@ -1,31 +1,30 @@
 `include "../../definitions/define.vh"
 
 module game_logic (
-	input clk, reset,
+	input vga_clk, update_clk, reset,
 	input [0:1] direction,
 	input wire [9:0] x_in, y_in, // new values are given at each clock cycle
 	output reg [0:1] entity,
-	output reg game_over, game_won
+	output reg game_over, game_won,
+	output reg `TAIL_SIZE tail_count
 );
 	wire `X_SIZE cur_x;
 	wire `Y_SIZE cur_y;
 	reg `X_SIZE snake_head_x, apple_x;
 	reg `Y_SIZE snake_head_y, apple_y;
-	reg [2:0] drawing_cycles_passed;
-	reg can_update, was_updated, is_cur_coord_tail;
+	reg is_cur_coord_tail;
 	reg `COORD_SIZE tails [0:`LAST_TAIL_ADDR];
-	reg `TAIL_SIZE tail_count;
 	wire [5:0] rand_num_x_orig, rand_num_y_orig,
 		rand_num_x_fit, rand_num_y_fit;
 
 	random_num_gen_63 rng_x (
-		.clk(can_update),
+		.clk(update_clk),
 		.seed(6'b100_110),
 		.rnd(rand_num_x_orig)
 	);
 
 	random_num_gen_63 rng_y (
-		.clk(can_update),
+		.clk(update_clk),
 		.seed(6'b101_001),
 		.rnd(rand_num_y_orig)
 	);
@@ -43,7 +42,6 @@ module game_logic (
 	initial
 	begin
 		init();
-		drawing_cycles_passed <= 0;
 		snake_head_x <= `GRID_MID_WIDTH;
 		snake_head_y <= `GRID_MID_HEIGHT;
 		tail_count <= 0;
@@ -54,7 +52,7 @@ module game_logic (
 	assign cur_y = (y_in / `V_SQUARE);
 
 	// return entity code of the current x & y
-	always @(posedge clk)
+	always @(posedge vga_clk)
 	begin
 		if (
 			cur_x == snake_head_x &&
@@ -82,13 +80,13 @@ module game_logic (
 
 	// traverse the array of tails and see if
 	// the current coordinate is a tail
-	always @(posedge clk or posedge reset)
+	always @(posedge vga_clk or posedge reset)
 	begin
 		integer i;
 
 		if (reset)
 		begin
-			game_over <= 0;
+			game_over = 0;
 		end
 		else
 		begin
@@ -113,7 +111,7 @@ module game_logic (
 	end
 
 	// move snake head
-	always @(posedge can_update or posedge reset)
+	always @(posedge update_clk or posedge reset)
 	begin
 		if (reset)
 		begin
@@ -122,41 +120,44 @@ module game_logic (
 		end
 		else
 		begin
-			case (direction)
-				`LEFT_DIR:
-				begin
-					snake_head_x =
-						(snake_head_x == 0) ?
-							`LAST_HOR_ADDR:
-							(snake_head_x - 12'd1);
-				end
-				`TOP_DIR:
-				begin
-					snake_head_y =
-						(snake_head_y == 0) ?
-							`LAST_VER_ADDR:
-							(snake_head_y - 12'd1);
-				end
-				`RIGHT_DIR:
-				begin
-					snake_head_x =
-						(snake_head_x == `LAST_HOR_ADDR) ?
-							0:
-							(snake_head_x + 12'd1);
-				end
-				`DOWN_DIR:
-				begin
-					snake_head_y =
-						(snake_head_y == `LAST_VER_ADDR) ?
-							0:
-							(snake_head_y + 12'd1);
-				end
-			endcase
+			if (~game_over)
+			begin
+				case (direction)
+					`LEFT_DIR:
+					begin
+						snake_head_x <=
+							(snake_head_x == 0) ?
+								`LAST_HOR_ADDR:
+								(snake_head_x - 12'd1);
+					end
+					`TOP_DIR:
+					begin
+						snake_head_y <=
+							(snake_head_y == 0) ?
+								`LAST_VER_ADDR:
+								(snake_head_y - 12'd1);
+					end
+					`RIGHT_DIR:
+					begin
+						snake_head_x <=
+							(snake_head_x == `LAST_HOR_ADDR) ?
+								0:
+								(snake_head_x + 12'd1);
+					end
+					`DOWN_DIR:
+					begin
+						snake_head_y <=
+							(snake_head_y == `LAST_VER_ADDR) ?
+								0:
+								(snake_head_y + 12'd1);
+					end
+				endcase
+			end
 		end
 	end
 
 	// update tails
-	always @(posedge can_update or posedge reset)
+	always @(posedge update_clk or posedge reset)
 	begin
 		integer i;
 
@@ -167,6 +168,8 @@ module game_logic (
 		end
 		else
 		begin
+			// if (~game_over) // cool animation
+			// begin
 			// in case of apple hit
 			if (snake_head_x == apple_x &&
 					snake_head_y == apple_y)
@@ -200,10 +203,11 @@ module game_logic (
 					end
 				end
 			end
+			//end
 		end
 	end
 
-	always @(posedge can_update or posedge reset)
+	always @(posedge update_clk or posedge reset)
 	begin
 		if (reset)
 		begin
@@ -212,55 +216,6 @@ module game_logic (
 		else if (tail_count == `MAX_TAILS)
 		begin
 			game_won <= 1;
-		end
-	end
-
-	// calculate whether the screen has been updated
-	always @(posedge clk)
-	begin
-		if (can_update)
-		begin
-			was_updated <= 1;
-		end
-		else
-		begin
-			was_updated <=
-				(drawing_cycles_passed == `DRAWING_CYCLES_TO_WAIT) ?
-				1:
-				0;
-		end
-	end
-
-	// calculate whether game state can be updated at this clock cycle
-	always @(posedge clk)
-	begin
-		can_update <=
-			(
-				~game_over &&
-				~was_updated &&
-				(drawing_cycles_passed == `DRAWING_CYCLES_TO_WAIT)
-			);
-	end
-
-	// calculate number of times screen was fully drawn
-	always @(posedge clk or posedge reset)
-	begin
-		if (reset)
-		begin
-			drawing_cycles_passed <= 0;
-		end
-		else
-		begin
-			if (
-				(x_in == `LAST_HOR_ADDR) &&
-				(y_in == `LAST_VER_ADDR)
-			)
-			begin
-				drawing_cycles_passed <=
-					(drawing_cycles_passed == `DRAWING_CYCLES_TO_WAIT) ?
-						0:
-						drawing_cycles_passed + 1;
-			end
 		end
 	end
 

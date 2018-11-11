@@ -8,31 +8,44 @@ module SnakeGame (
 		res_x_two,
 		res_y_one,
 		res_y_two,
-	
+
 	input wire clk, // 50MHz
-	
+
 	// VGA input
 	input wire
 		reset,
 		color, // swap between 2 outputs
-	
+
 	// VGA output
 	output wire
 		VGA_HS, // VGA H_SYNC
 		VGA_VS, // VGA V_SYNC
 		VGA_R,  // VGA Red
 		VGA_G,  // VGA Green
-		VGA_B   // VGA Blue
-	
+		VGA_B,  // VGA Blue
+
+	// Sseg output
+	output wire
+		[7:0] sseg_a_to_dp,
+	output wire
+		[3:0] sseg_an
 	// joystick output
 	//, output wire [0:1] dir_out // for debug
 );
 	// Clock
-	wire vga_clk;
+	wire vga_clk, update_clk;
 	
 	VGA_clk vga_clk_gen (
 		clk,
 		vga_clk
+	);
+
+	game_upd_clk upd_clk(
+		.in_clk(vga_clk),
+		.reset(reset),
+		.x_in(mVGA_X),
+		.y_in(mVGA_Y),
+		.out_clk(update_clk)
 	);
 
 	// Game input
@@ -43,7 +56,7 @@ module SnakeGame (
 		.two_resistors_x(res_x_two),
 		.one_resistor_y(res_y_one),
 		.two_resistors_y(res_y_two),
-		.clk(vga_clk),
+		.clk(update_clk),
 		.direction(dir)
 	);
 
@@ -51,16 +64,19 @@ module SnakeGame (
 
 	// Game logic
 	wire [0:1] cur_ent_code;
+	wire `TAIL_SIZE game_score;
 
 	game_logic game_logic_module (
-		.clk(vga_clk),
+		.vga_clk(vga_clk),
+		.update_clk(update_clk),
 		.reset(reset),
 		.direction(dir),
 		.x_in(mVGA_X),
 		.y_in(mVGA_Y),
 		.entity(cur_ent_code),
 		//.game_over(),
-		//.game_won()
+		//.game_won(),
+		.tail_count(game_score)
 	);
 
 	// VGA
@@ -112,5 +128,13 @@ module SnakeGame (
 	assign VGA_R = sVGA_R;
 	assign VGA_G = sVGA_G;
 	assign VGA_B = sVGA_B;
+
+	SSEG_Display sseg_d(
+		.clk_50M(clk),
+		.reset(reset),
+		.sseg_a_to_dp(sseg_a_to_dp),
+		.sseg_an(sseg_an),
+		.data(game_score)
+	);
 
 endmodule

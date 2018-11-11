@@ -1,5 +1,5 @@
-`include "../../definitions/define.vh"
-`include "../../definitions/sprites.vh"
+`include "../../../definitions/define.vh"
+`include "../../../definitions/sprites.vh"
 
 module	VGA_Pattern	(	//	Read Out Side
 						oRed,
@@ -36,20 +36,20 @@ always @(posedge iVGA_CLK or posedge reset)
 begin
 	if(reset)
 	begin
-		oRed	<=	0;
-		oGreen	<=	0;
-		oBlue	<=	0;
+		oRed   <= 0;
+		oGreen <= 0;
+		oBlue  <= 0;
 	end
 	else
 	begin
 	if(iColor_SW == 0)
 		begin
 			// DRAW CURRENT STATE
-			if (ent == `ENT_NOTHING) // nothing
+			if (ent == `ENT_NOTHING)
 			begin
-				oRed <= 0;
-				oGreen <= 0;
-				oBlue <= 0;
+				oRed   <= 1;
+				oGreen <= 1;
+				oBlue  <= 1;
 			end
 			else
 			begin
