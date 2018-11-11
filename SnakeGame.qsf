@@ -76,6 +76,7 @@ set_location_assignment PIN_30 -to res_x_one
 set_location_assignment PIN_52 -to res_x_two
 set_location_assignment PIN_39 -to res_y_one
 set_location_assignment PIN_44 -to res_y_two
+set_global_assignment -name VERILOG_FILE src/modules/util/random/random_num_gen_63.v
 set_global_assignment -name VERILOG_FILE src/modules/util/random/LFSR/LFSR.v
 set_global_assignment -name VERILOG_FILE src/modules/input/joystick_input.v
 set_global_assignment -name VERILOG_FILE src/modules/input/buttons.v

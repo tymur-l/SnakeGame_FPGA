@@ -18,31 +18,17 @@ module game_logic (
 	wire [5:0] rand_num_x_orig, rand_num_y_orig,
 		rand_num_x_fit, rand_num_y_fit;
 
-	/*
-	linear_feedback_shift_register #(.NUM_BITS(6)) lfsr_x (
-		.i_Clk(clk),
-		.i_Enable(1),
-
-		// Optional Seed Value
-		.i_Seed_DV (0),
-		.i_Seed_Data (0),
-
-		.o_LFSR_Data(rand_num_x_orig),
-		//.o_LFSR_Done()
+	random_num_gen_63 rng_x (
+		.clk(can_update),
+		.seed(6'b100_110),
+		.rnd(rand_num_x_orig)
 	);
 
-	linear_feedback_shift_register #(.NUM_BITS(6)) lfsr_y (
-		.i_Clk(clk),
-		.i_Enable(1),
-
-		// Optional Seed Value
-		.i_Seed_DV (0),
-		.i_Seed_Data (0),
-
-		.o_LFSR_Data(rand_num_y_orig),
-		//.o_LFSR_Done()
+	random_num_gen_63 rng_y (
+		.clk(can_update),
+		.seed(6'b101_001),
+		.rnd(rand_num_y_orig)
 	);
-	*/
 
 	assign rand_num_x_fit = rand_num_x_orig % `LAST_HOR_ADDR;
 	assign rand_num_y_fit = rand_num_y_orig % `LAST_VER_ADDR;
@@ -192,9 +178,8 @@ module game_logic (
 					tail_count <= tail_count + 1;
 				end
 
-				// TODO: generate random coordinate for an apple and spawn it there
-				apple_x <= 0; //rand_num_x_fit;
-				apple_y <= 0; //rand_num_y_fit;
+				apple_x <= rand_num_x_fit;
+				apple_y <= rand_num_y_fit;
 			end
 			else
 			begin

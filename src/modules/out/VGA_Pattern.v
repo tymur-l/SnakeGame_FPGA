@@ -1,5 +1,5 @@
 `include "../../definitions/define.vh"
-`include "../../definitions/sprites_debug.vh"
+`include "../../definitions/sprites.vh"
 
 module	VGA_Pattern	(	//	Read Out Side
 						oRed,
