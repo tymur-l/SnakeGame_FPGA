@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 
 filename = "snake_head"
+index = 1
 
 im = Image.open(filename + ".png")
 n = Image.new('RGB', (16, 16))
@@ -11,7 +12,7 @@ size = im.size
 
 data = []
 
-code = "sp[1][{i}][{j}] = 3'b{RGB};\\\n"
+code = "sp[" + str(index) + "][{i}][{j}] = 3'b{RGB};\\\n"
 
 with open("code_" + filename + ".txt", 'w') as f:
     for i in range(size[0]):
