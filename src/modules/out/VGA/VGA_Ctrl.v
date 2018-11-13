@@ -32,6 +32,7 @@ input		reset;
 reg		[9:0]	H_Cont;
 reg		[9:0]	V_Cont;
 ////////////////////////////////////////////////////////////
+// Following parameters produces a 640x480 60Hz 60 FPS image
 //	Horizontal	Parameter
 
 	localparam	H_FRONT	=	16;

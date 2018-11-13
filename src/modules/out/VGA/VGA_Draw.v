@@ -21,8 +21,8 @@ input	[9:0]		iVGA_Y;
 input				iVGA_CLK;
 //	Control Signals
 input				reset;
-input				iColor_SW;
-input	[0:1]		ent;
+input				iColor_SW; // drawing mode: either game or colored lines
+input	[0:1]		ent; // entity to draw
 
 // Array of sprites
 /*
