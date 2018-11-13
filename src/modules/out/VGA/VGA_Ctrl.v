@@ -10,9 +10,6 @@ module	VGA_Ctrl	(	//	Host Side
 						oVGA_B,
 						oVGA_HS,
 						oVGA_VS,
-						oVGA_SYNC,
-						oVGA_BLANK,
-						oVGA_CLOCK,
 						//	Control Signal
 						iCLK,
 						reset	);
@@ -28,9 +25,6 @@ output	oVGA_G;
 output	oVGA_B;
 output reg	oVGA_HS;
 output reg	oVGA_VS;
-output	oVGA_SYNC;
-output	oVGA_BLANK;
-output	oVGA_CLOCK;
 //	Control Signal
 input		iCLK;
 input		reset;	
@@ -38,6 +32,7 @@ input		reset;
 reg		[9:0]	H_Cont;
 reg		[9:0]	V_Cont;
 ////////////////////////////////////////////////////////////
+// Following parameters produces a 640x480 60Hz 60 FPS image
 //	Horizontal	Parameter
 
 	localparam	H_FRONT	=	16;
@@ -56,9 +51,6 @@ reg		[9:0]	V_Cont;
 	parameter	V_BLANK	=	V_FRONT+V_SYNC+V_BACK;
 	parameter	V_TOTAL	=	V_FRONT+V_SYNC+V_BACK+V_ACT;
 ////////////////////////////////////////////////////////////
-	assign	oVGA_SYNC	=	1'b1;			//	This pin is unused.
-	assign	oVGA_BLANK	=	~((H_Cont<H_BLANK)||(V_Cont<V_BLANK));
-	assign	oVGA_CLOCK	=	~iCLK;
 	assign	oVGA_R		=	(oCurrent_X > 0) ?	iRed : 0 ;
 	assign	oVGA_G		=	(oCurrent_X > 0) ?	iGreen : 0 ;
 	assign	oVGA_B		=	(oCurrent_X > 0) ?	iBlue : 0 ;

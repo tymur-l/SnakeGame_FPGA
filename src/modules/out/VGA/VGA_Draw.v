@@ -1,7 +1,7 @@
 `include "../../../definitions/define.vh"
 `include "../../../definitions/sprites.vh"
 
-module	VGA_Pattern	(	//	Read Out Side
+module	VGA_Draw	(	//	Read Out Side
 						oRed,
 						oGreen,
 						oBlue,
@@ -21,10 +21,17 @@ input	[9:0]		iVGA_Y;
 input				iVGA_CLK;
 //	Control Signals
 input				reset;
-input				iColor_SW;
-input [0:1]		ent;
+input				iColor_SW; // drawing mode: either game or colored lines
+input	[0:1]		ent; // entity to draw
 
-// Drawing
+// Array of sprites
+/*
+0 - apple
+1 - snake head
+2 - snake tail
+
+Every sprite consists of 3 bits - RGB values of a particular pixel
+*/
 reg [0:`SPRITE_MSB] sp [0:2][0:`H_SQUARE_LAST_ADDR][0:`V_SQUARE_LAST_ADDR];
 
 initial
@@ -53,13 +60,14 @@ begin
 			end
 			else
 			begin
+				// Drawing a particular pixel from sprite
 				oRed <= sp[ent][iVGA_X % `H_SQUARE][iVGA_Y % `V_SQUARE][0];
 				oGreen <= sp[ent][iVGA_X % `H_SQUARE][iVGA_Y % `V_SQUARE][1];
 				oBlue <= sp[ent][iVGA_X % `H_SQUARE][iVGA_Y % `V_SQUARE][2];
 			end
 		end
 		else
-		begin
+		begin //Draw lines of every color that can be produces
 			if (iVGA_Y < 60)
 			begin
 				oRed <= 1;

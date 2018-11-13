@@ -90,7 +90,7 @@ module SnakeGame (
 	wire	sVGA_G;
 	wire	sVGA_B;
 
-	VGA_Pattern	u3 // Drawing
+	VGA_Draw	u3 // Drawing
 		(	//	Read Out Side
 			.oRed(mVGA_R),
 			.oGreen(mVGA_G),
@@ -117,9 +117,6 @@ module SnakeGame (
 			.oVGA_B(sVGA_B),
 			.oVGA_HS(VGA_HS),
 			.oVGA_VS(VGA_VS),
-			.oVGA_SYNC(),
-			.oVGA_BLANK(),
-			.oVGA_CLOCK(),
 			//	Control Signal
 			.iCLK(vga_clk),
 			.reset(reset)
