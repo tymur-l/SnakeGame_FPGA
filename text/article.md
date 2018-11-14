@@ -302,7 +302,7 @@ After 8 weeks of hard work, we can finally say, that the project was successfull
 
 ## Acknowledgements
 
-We would like to express our special thanks of gratitude to our professors [Muhammad Fahim](https://scholar.google.com/citations?user=HFp8hzMAAAAJ) and [Alexander Tormasov](https://www.linkedin.com/in/alexandertormasov/) for giving us knowledge and opportunity to put them into practice. We heartily thank [Vladislav Ostankovich](https://github.com/vladostan/) for providing us with essential hardware used in the project and [Temur Kholmatov](https://github.com/temur-kh/) for helping with debugging. We would not forget to remember [Anastassiya Boiko](https://github.com/Rikitariko) drawing beautiful sprites for the game. Also, we would like to extend our sincere esteems to Rabab Marouf for the proofreading and editing this article.
+We would like to express our special thanks of gratitude to our professors [Muhammad Fahim](https://scholar.google.com/citations?user=HFp8hzMAAAAJ) and [Alexander Tormasov](https://scholar.google.com/citations?user=bsy2_u0AAAAJ) for giving us knowledge and opportunity to put them into practice. We heartily thank [Vladislav Ostankovich](https://github.com/vladostan/) for providing us with essential hardware used in the project and [Temur Kholmatov](https://github.com/temur-kh/) for helping with debugging. We would not forget to remember [Anastassiya Boiko](https://github.com/Rikitariko) drawing beautiful sprites for the game. Also, we would like to extend our sincere esteems to Rabab Marouf for the proofreading and editing this article.
 
 Thanks to all who helped us test the game and tried to set records, hope you enjoy playing it!
 
