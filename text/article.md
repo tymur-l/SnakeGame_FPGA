@@ -1,4 +1,4 @@
-# The Snake game for FPGA Cyclone IV (with VGA & SPI joystick)
+﻿# The Snake game for FPGA Cyclone IV (with VGA & SPI joystick)
 
 ## Introduction
 
@@ -95,8 +95,8 @@ The module that generates a special clock which triggers an update of a game sta
 - VGA_R - VGA red pin (PIN_2)
 - VGA_HS - VGA horizontal synchronization (PIN_142)
 - VGA_VS - VGA vertical synchronization (PIN_143)
-- sseg_a_to_dp - specifies which of 7 segments to light (PIN_115, PIN_119, PIN_120, PIN_121, PIN_124, PIN_125, PIN_126, PIN_127)
-- sseg_an - specifies which of 8 7-segment display is to be used (PIN_128, PIN_129, PIN_132, PIN_133)
+- sseg_a_to_dp - specifies which of 8 segments to light (PIN_115, PIN_119, PIN_120, PIN_121, PIN_124, PIN_125, PIN_126, PIN_127)
+- sseg_an - specifies which of 4 7-segment display is to be used (PIN_128, PIN_129, PIN_132, PIN_133)
 
 ## Implementation
 
@@ -110,7 +110,7 @@ While implementing an input module, we found out that stick provides an analog s
 - mid — ~2.5V output
 - low — ~0V output
 
-It is very similar to the ternary system: for the X-axis, we have true (left), false (right) and undetermined state, where the joystick is neither on left nor on right position. The problem is that the FPGA board can only process digital, so we can not convert this ternary logic to by just writing some code. The first idea was to find an Analog-Digital converter, but then we decided to use our school knowledge of physics and implement the voltage divider<sup>[3](#3)</sup>. To define three states we will need two bits: 00 is false, 01 is undefined and 11 is true. After some measurements we found out that on our board border between zero and one is approximately 1.7V, so we built the following scheme (image created using circuitlab<sup>[4](#4)</sup>):
+It is very similar to the ternary system: for the X-axis, we have true (left), false (right) and undetermined state, where the joystick is neither on left nor on right position. The problem is that the FPGA board can only process digital, so we can not convert this ternary logic to binary just by writing some code. The first idea was to find an Analog-Digital converter, but then we decided to use our school knowledge of physics and implement the voltage divider<sup>[3](#3)</sup>. To define three states we will need two bits: 00 is false, 01 is undefined and 11 is true. After some measurements we found out that on our board border between zero and one is approximately 1.7V, so we built the following scheme (image created using circuitlab<sup>[4](#4)</sup>):
 
 
 ![Stick_connection.png](img/Stick_connection.png)
