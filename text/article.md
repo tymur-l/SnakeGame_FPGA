@@ -37,6 +37,7 @@ As mentioned, the game logic is simple. A player starts with a single snake's he
 While implementing an input module, we found out that stick provides analog signal, but the FPGA can only process digital. The first idea was finding an analog-to-digital converter (ADC), but then we decided to use our school knowledge of physics and implemented the following construction (scheme???)
 
 //stick_connection.png
+![alt text](img/stick.jpg)
 
 Stick has 3 positions for each axis:
  - top - ~5V output
