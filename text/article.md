@@ -2,19 +2,19 @@
 
 ## Introduction
 
-Do you remember a [snake game](https://en.wikipedia.org/wiki/Snake_(video_game_genre)) from childhood, where a snake runs on the screen trying to eat an apple? This article describes our implementation of the game on an FPGA<sup>[1](#1)</sup>.
+Do you remember the [snake game](https://en.wikipedia.org/wiki/Snake_(video_game_genre)) from childhood, where a snake runs on the screen trying to eat an apple? This article describes our implementation of the game on an FPGA<sup>[1](#1)</sup>.
 
-But first, let us present ourselves and explain why were we working on the project. There are 3 of us: [Tymur Lysenko](https://github.com/Sitiritis), [Daniil Manakovskiy](https://github.com/WinnerOK) and [Sergey Makarov](https://github.com/SgMakarov). As first-year students of [Innopolis University](https://university.innopolis.ru/en/), we had a course in "Computer Architecture", which is taught professionally and easily allows one to understand what is happening at a low level of a computer. At some point during the course teaching staff provided students with an opportunity to develop a project for an FPGA for additional points in the course. Of course, we did that not just because of the grade, but to feel ourselves engineers producing a product to be used by others, acquire some experience in the hardware design, and, finally, enjoy playing the game in the end :)
+But first, let us introduce ourselves and explain the rationale why we have worked on the project. There are 3 of us: [Tymur Lysenko](https://github.com/Sitiritis), [Daniil Manakovskiy](https://github.com/WinnerOK) and [Sergey Makarov](https://github.com/SgMakarov). As first-year students of [Innopolis University](https://university.innopolis.ru/en/), we had a course in "Computer Architecture", which is taught professionally and can allow a learner to understand what is happening at the low level of a computer. At some point during the course, the teaching staff provided students with the opportunity to develop a project for an FPGA for additional points in the course. Of course, our motivation has not been only the grade, but our interest as future engineers to produce a work that might be used by others, acquire more experience in the hardware design, and finally, enjoy playing the game in the end :)
 
-Now, let us "go into dark deep details..."
+Now, let us go "into dark deep details..."
 
-## General overview of the project
+## Project overview
 
-For our project we decided to pick an easy in implementation and fun "Snake" game, where an input is taken from an SPI joystick, being processed, a picture is being outputted to a VGA monitor, and a score is shown on a 7-segment display (in hex). By saying "easy in implementation" it is meant, that game logic is quite intuitive and straightforward, not taking in consideration VGA and the joystick. The last 2 were interesting challenges, implementing which led to a good gaming experience.
+For our project we decided to pick an easily implementable and fun game, namely a "Snake" game, where an input is taken from an SPI joystick and processed, a picture is being outputted to a VGA monitor, and a score is shown on a 7-segment display (in hex). The game logic is intuitive and straightforward, not taking into consideration VGA and the joystick, which were interesting challenges, and implementing them led to a good gaming experience.
 
 ![Gameplay.gif](img/gameplay.gif)
 
-As mentioned, the game logic is simple. A player starts with a single snake's head. The goal is to eat apples. They are being randomly generated on the screen after a previous one was eaten. Additionally, the snake is being extended by 1 tail after satisfying the hunger. Tails move one after another, following the head. The snake is always moving. If screen borders were reached, the snake is being transferred to another side of the screen. If head hits a tail - the game is over.
+As mentioned, the game logic is simple. A player starts with a single snake's head. The goal is to eat apples. They are being randomly generated on the screen after a previous one was eaten. Additionally, the snake is being extended by 1 tail after satisfying the hunger. Tails move one after another, following the head. The snake is always moving. If the screen borders were reached the snake is being transferred to another side of the screen. If the head hits a tail - the game is over.
 
 ## Tools used
 - Altera Cyclone IV (EP4CE6E22C8N) with 6272 logical elements, on-board 50 MHz clock, 3-bit color VGA, 8 digit 7-segment display. The FPGA can't take an analog input to its pins
@@ -66,7 +66,7 @@ Is used to produce a direction code based on an input from the joystick.
 
 #### game_logic
 
-Contains all logic needed to play a game. Moves snake in a given direction. Additionally, it is responsible for apple eating and collision detection. Furthermore, it receives current x and y coordinates of a pixel on the screen and returns which entity is currently placed there.
+game_logic contains all logic needed to play a game. It moves snake in a given direction. Additionally, it is responsible for an apple eating and collision detection. Furthermore, it receives current x and y coordinates of a pixel on the screen and returns an entity placed at the position.
 
 #### VGA_Draw
 
@@ -269,9 +269,9 @@ Right before the deadline, we decided to output a game score to the 7-segment di
 
 ### Game logic
 
-During the development, we tried several approaches, however, ended up with the one that requires a minimal amount of memory and is quite easy to implement in hardware and make computations parallel.
+During the development, we tried several approaches, however, we ended up with the one that requires a minimal amount of memory and is quite easy to implement in hardware and make computations parallel.
 
-As VGA draws a pixel at each clock cycle starting from the left top one, going to right bottom, the VGA_Draw module, which is responsible for producing a color for a pixel, needs to know which color to use for current coordinates. That's what the game logic module should output - an entity code for the given coordinates.
+As VGA draws a pixel at each clock cycle starting from the left top one, going to the right bottom, the VGA_Draw module, which is responsible for producing a color for a pixel, needs to identify which color to use for current coordinates. That's what the game logic module should output - an entity code for the given coordinates.
 
 Nevertheless, it is not a single function of the module. Additionally, it has to update the game state sometimes. It can be updated only after the full screen was drawn. That's where game_upd_clk module comes in. A signal produced by this module is used to determine when to update.
 
@@ -285,12 +285,12 @@ Game state consists of:
   - Game over flag
   - Game won flag
 
-Update of the game state includes several stages:
-  1. Move the snake's head to new coordinates, based on a given direction. If it turned out that some coordinate is on its edge and it needs to be changed further, then the head has to jump on another edge of the screen. For example, a direction is set to left, and the current X coordinate is 0. Therefore, the new X coordinate should become equal to the last horizontal address.
+The update of the game state includes several stages:
+  1. Move the snake's head to new coordinates, based on a given direction. If it turned out that some coordinate is on its edge and it needs to be changed further, then the head has to jump on another edge of the screen. For example, a direction is set to the left, and the current X coordinate is 0. Therefore, the new X coordinate should become equal to the last horizontal address.
   2. New coordinates of the snake's head are tested against apple coordinates:  
-    2.1. In case they are equal and the array is not full - add a new tail to the array and increment tail counter. When the counter reaches it's highest value (128 in our case) game won flag is being set up and that means, that snake can not grow any more, but the game still continues. The new tail is being placed on previous coordinates of a snake's head. Random coordinates for X and Y should be taken to place apple there.  
-    2.2. In case they are not equal - sequentially swap coordinates of adjacent tails. (n + 1)-th tail should receive coordinates of n-th, in case n-th tail was added before (n + 1)-th. The first tail receives old coordinates of the head.
-  3. Check, if new coordinates of the snake's head coincide with coordinates of any tail. If that is the case, game over flag is raised and the game stops.
+    2.1. In case they are equal and the array is not full - add a new tail to the array and increment tail counter. When the counter reaches its highest value (128 in our case), game won flag is being set up and that means, that snake cannot grow anymore, but the game still continues. The new tail is being placed on the previous coordinates of the snake's head. Random coordinates for X and Y should be taken to place an apple there. 
+    2.2. In case they are not equal - sequentially swap coordinates of the adjacent tails. (n + 1)-th tail should receive coordinates of n-th, in case n-th tail was added before (n + 1)-th. The first tail receives old coordinates of the head.
+  3. Check, if new coordinates of the snake's head coincide with coordinates of any tail. If that is the case, the game over flag is raised and the game stops.
 
 #### Random coordinate generation
 
@@ -298,7 +298,7 @@ Random numbers produced by taking random bits generated by 6-bit _linear-feedbac
 
 ## Conclusion
 
-After 8 weeks of hard work, we can finally say, that the project was successfully implemented. We got some ideas about game development and ended up with an enjoyable version of a "Snake" game for an FPGA. The game is playable, and our skills in programming, designing an architecture and soft-skills improved.
+After 8 weeks of hard work, we can finally say, that the project was successfully implemented. We got some experience in game development and ended up with an enjoyable version of a "Snake" game for an FPGA. The game is playable, and our skills in programming, designing an architecture and have soft-skills improved.
 
 ## Acknowledgements
 
