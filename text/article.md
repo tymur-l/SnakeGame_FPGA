@@ -124,7 +124,7 @@ Figure 5. Circuit for ADC for joystick
 
 The physical implementation is built from an Arduino kit items, and looks as follows:
 
-![stick_imp](img/stick_imp.png)
+![stick_imp](img/stick_imp.jpg)
 
 Figure 6. ADC implementation
 
