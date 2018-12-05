@@ -14,7 +14,7 @@ output wire[7:0] sseg_a_to_dp;	// cathode of seven segment display( a,b,c,d,e,f,
 output wire[3:0] sseg_an;			// anaode of seven segment display( AN3,AN2,AN1,AN0 )
 
 
-input wire [15:0] data ; // display "1234" on sseg led
+input wire [15:0] data ; // display data on sseg led
 
 
 SSEG_Driver U1 ( .clk_50M( clk_50M ),

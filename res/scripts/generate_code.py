@@ -24,8 +24,9 @@ with open("code_" + filename + ".txt", 'w') as f:
                                     int(clr[2] / 128))  # clr[*]/128 is either 0 or 1
             tmp.append(vg)
             f.write(code.format(i=i, j=j, RGB=vg))  # Verilog code to initialization
-            d.point((i, j), tuple([int(vg[0]) * 255, int(vg[1]) * 255, int(vg[2]) * 255]))  # Visualize final image
-        data.append(tmp)
+            d.point((i, j), tuple([int(vg[0]) * 255, int(vg[1]) * 255, int(vg[2]) * 255]))
+            # Visualize final image
+            data.append(tmp)
 
 n.save(filename + "_3bit.png")
 

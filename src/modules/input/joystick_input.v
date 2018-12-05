@@ -25,12 +25,12 @@ begin
 	right = ~one_resistor_x;
 	up = two_resistors_y;
 	down = ~one_resistor_y;
-
-	// u=up;
-	// l=left;
-	// d=down;
-	// r=right;
-
+	/*
+	u=up;
+	l=left;
+	d=down;
+	r=right;
+	*/
 	if(left + right + up + down == 3'b001) // if only one pressed 
 
 	begin 

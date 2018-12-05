@@ -23,7 +23,7 @@
 `define H_SQUARE_LAST_ADDR (`H_SQUARE - 1)
 `define V_SQUARE_LAST_ADDR (`V_SQUARE - 1)
 
-`define DRAWING_CYCLES_TO_WAIT 3'd3
+`define DRAWING_CYCLES_TO_WAIT 3'd3 // regulates the speed of the game 1 - very fast : 7 - very slow
 
 `define SPRITE_CNT 3
 `define SPRITE_MSB `SPRITE_CNT - 1

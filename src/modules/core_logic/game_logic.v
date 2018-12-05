@@ -5,7 +5,6 @@ module game_logic (
 	input [0:1] direction,
 	input wire [9:0] x_in, y_in, // new values are given at each clock cycle
 	output reg [0:1] entity,
-	output reg game_over, game_won,
 	output reg `TAIL_SIZE tail_count
 );
 	wire `X_SIZE cur_x;
@@ -13,6 +12,7 @@ module game_logic (
 	reg `X_SIZE snake_head_x, apple_x;
 	reg `Y_SIZE snake_head_y, apple_y;
 	reg is_cur_coord_tail;
+	reg game_over;
 	reg `COORD_SIZE tails [0:`LAST_TAIL_ADDR];
 	wire [5:0] rand_num_x_orig, rand_num_y_orig,
 		rand_num_x_fit, rand_num_y_fit;
@@ -36,6 +36,7 @@ module game_logic (
 	begin
 		apple_x <= 34;
 		apple_y <= 9;
+		tail_count <= 0;
 	end
 	endtask
 
@@ -44,8 +45,6 @@ module game_logic (
 		init();
 		snake_head_x <= `GRID_MID_WIDTH;
 		snake_head_y <= `GRID_MID_HEIGHT;
-		tail_count <= 0;
-		game_won <= 0;
 	end
 
 	assign cur_x = (x_in / `H_SQUARE);
@@ -164,7 +163,6 @@ module game_logic (
 		if (reset)
 		begin
 			init();
-			tail_count <= 0;
 		end
 		else
 		begin
@@ -204,18 +202,6 @@ module game_logic (
 				end
 			end
 			//end
-		end
-	end
-
-	always @(posedge update_clk or posedge reset)
-	begin
-		if (reset)
-		begin
-			game_won <= 0;
-		end
-		else if (tail_count == `MAX_TAILS)
-		begin
-			game_won <= 1;
 		end
 	end
 
